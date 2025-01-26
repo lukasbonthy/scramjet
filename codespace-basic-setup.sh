@@ -1,14 +1,13 @@
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source "$HOME/.cargo/env" # to import rustup in current shell
-pnpm i
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+source $HOME/.cargo/env
+export PATH="$HOME/.cargo/bin:/usr/local/bin:$PATH"
+
 cargo install wasm-bindgen-cli
-VER=$(curl --silent -qI https://github.com/WebAssembly/binaryen/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}'); \
-curl -LO https://github.com/WebAssembly/binaryen/releases/download/$VER/binaryen-${VER}-x86_64-linux.tar.gz
-tar xvf binaryen-${VER}-x86_64-linux.tar.gz
-rm -rf binaryen-${VER}-x86_64-linux.tar.gz
-mv binaryen-${VER}/bin/* ~/.local/bin
-mv binaryen-${VER}/lib/* ~/.local/lib
-rm -rf binaryen-${VER}
-cargo install --git https://github.com/r58playz/wasm-snip
+curl -L https://github.com/WebAssembly/binaryen/releases/download/version_113/binaryen-version_113-x86_64-linux.tar.gz | tar xz
+mv binaryen-version_113/* $HOME/.local/bin/
+export PATH="$HOME/.local/bin:$PATH"
+
+cargo install wasm-snip
+
+pnpm install --frozen-lockfile
 pnpm rewriter:build
-pnpm build
